@@ -1,65 +1,10 @@
-/* src/App.css */
+/* cascading style sheets for the app component wwe use this for global styling base snd styling the app component and css reusability */
+/* cascading means ranking or priority there might be multiple styles that can be applied to a single component thats when this cascading comes into picture means it decides what to be applied first the different styles might be inline,internal,external,defaults etc */
+/* cascading is effected by the specificity , importance, order*/
 .App {
   text-align: center;
   font-family: "Comic Sans MS", cursive, sans-serif;
-  background-color: #e0f7fa;
   min-height: 100vh;
   padding: 20px;
-}
-
-.game-container {
-  background: #fff;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  display: inline-block;
-}
-
-.word-image {
-  width: 200px;
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.letters-container {
-  margin-top: 20px;
-}
-
-.starfish {
-  background-color: #ffcc80;
-  border: none;
-  border-radius: 50%;
-  margin: 10px;
-  padding: 15px 20px;
-  font-size: 24px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.starfish:hover {
-  background-color: #ffb74d;
-}
-
-.guess-container {
-  margin-top: 20px;
-  font-size: 28px;
-  letter-spacing: 10px;
-  font-weight: bold;
-}
-
-.feedback {
-  margin-top: 20px;
-  font-size: 24px;
-  color: #00796b;
-}
-
-.next-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #4db6ac;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+  /* background: url("../public/images/download.jpg") no-repeat center center/cover;  */
 }
