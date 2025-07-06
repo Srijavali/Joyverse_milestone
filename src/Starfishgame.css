@@ -277,3 +277,18 @@ body, html {
   100% { transform: rotate(0); }
 }
 
+#emotion-box {
+  position: fixed;
+  top: 80px; /* Just below the score-board */
+  right: 30px;
+  background: #f39c12;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 998;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+

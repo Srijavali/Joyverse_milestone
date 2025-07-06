@@ -25,6 +25,21 @@ body {
   position: relative;
 }
 
+/* SCROLL SNAP CONTAINER */
+.scroll-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+/* SCROLL SNAP SECTIONS */
+.scroll-container > section,
+.scroll-container > .hero-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+}
+
 /* Hero section with video background - React compatible */
 .hero-section {
   position: relative;
@@ -34,6 +49,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  scroll-snap-align: start;
 }
 
 .hero-section video {
@@ -126,7 +142,7 @@ body {
   transition: 0s;
 }
 
-/* Game sections - React compatible */
+/* Game sections - React compatible with scroll snap */
 section.game-section {
   position: relative;
   padding: 80px 20px;
@@ -134,6 +150,10 @@ section.game-section {
   z-index: 1;
   min-height: 100vh;
   width: 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 section.game-section h2 {
@@ -189,13 +209,18 @@ section.game-section h2 {
   font-weight: bold;
 }
 
-/* Additional game section styling */
+/* Additional game section styling - ADJUSTED FOR PARENT SECTION */
 .game-section {
   padding: 60px 20px;
   background: #f9f9f9;
   text-align: center;
   font-family: 'Segoe UI', sans-serif;
   width: 100%;
+  min-height: auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .game-section h2 {
@@ -204,13 +229,25 @@ section.game-section h2 {
   margin-bottom: 30px;
 }
 
+/* Parent Content Container - MAINTAINED GAPS */
+.parent-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  justify-content: flex-start;
+  min-height: auto;
+}
+
 .info-box, .dyslexia-box {
-  max-width: 700px;
-  margin: 30px auto;
   background: white;
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin: 0;
 }
 
 .info-box p, .dyslexia-box p {
@@ -220,7 +257,7 @@ section.game-section h2 {
   line-height: 1.6;
 }
 
-.dyslexia-box h1 {
+.info-box h3, .dyslexia-box h3 {
   font-size: 2rem;
   color: #2e86ab;
   margin-bottom: 15px;
@@ -242,6 +279,8 @@ section.game-section h2 {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  border: none;
+  font-family: inherit;
 }
 
 .primary-button:hover {
@@ -255,14 +294,20 @@ section.game-section h2 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Footer */
+/* Footer with scroll snap - REDUCED HEIGHT */
 footer {
   background-color: #2e86ab;
   color: white;
   text-align: center;
-  padding: 30px 20px;
+  padding: 40px 20px;
   font-size: 16px;
   width: 100%;
+  min-height: 200px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 footer a {
@@ -274,7 +319,75 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* Mobile responsiveness */
+/* Mobile responsiveness with scroll snap adjustments */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 48px;
+  }
+
+  .hero-content p {
+    font-size: 18px;
+  }
+
+  .section-buttons {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .section-buttons a,
+  .section-buttons button {
+    width: 250px;
+    text-align: center;
+    font-size: 18px;
+    padding: 12px 25px;
+  }
+
+  .game-box {
+    width: 180px;
+    font-size: 16px;
+  }
+
+  .game-image {
+    height: 130px;
+  }
+
+  .game-grid {
+    gap: 25px;
+    padding: 0 15px;
+  }
+
+  section.game-section {
+    padding: 60px 15px;
+  }
+
+  .parent-content {
+    padding: 20px 15px;
+    gap: 25px;
+  }
+
+  .info-box, .dyslexia-box {
+    padding: 25px;
+  }
+
+  .info-box h3, .dyslexia-box h3 {
+    font-size: 1.8rem;
+  }
+
+  .info-box p, .dyslexia-box p {
+    font-size: 16px;
+  }
+
+  .game-section h2 {
+    font-size: 2.2rem;
+  }
+
+  /* Adjust scroll snap for tablets */
+  .scroll-container {
+    scroll-snap-type: y proximity;
+  }
+}
+
 @media (max-width: 600px) {
   .hero-content h1 {
     font-size: 40px;
@@ -284,24 +397,20 @@ footer a:hover {
     font-size: 16px;
   }
 
+  .section-buttons a,
+  .section-buttons button {
+    width: 200px;
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
   .game-box {
     width: 150px;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .game-image {
     height: 120px;
-  }
-
-  .section-buttons {
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-  }
-
-  .section-buttons a {
-    width: 200px;
-    text-align: center;
   }
 
   .game-grid {
@@ -310,30 +419,154 @@ footer a:hover {
   }
 
   section.game-section {
-    padding: 60px 10px;
+    padding: 50px 10px;
+  }
+
+  .parent-content {
+    padding: 15px 10px;
+    gap: 20px;
   }
 
   .info-box, .dyslexia-box {
-    margin: 20px 10px;
     padding: 20px;
+  }
+
+  .info-box h3, .dyslexia-box h3 {
+    font-size: 1.5rem;
+  }
+
+  .info-box p, .dyslexia-box p {
+    font-size: 15px;
+  }
+
+  .game-section h2 {
+    font-size: 2rem;
   }
 }
 
-/* Ensure proper stacking context for React */
-.hero-section {
-  position: relative;
-  z-index: 0;
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .hero-content p {
+    font-size: 14px;
+  }
+
+  .section-buttons {
+    gap: 15px;
+  }
+
+  .section-buttons a,
+  .section-buttons button {
+    width: 180px;
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  .game-box {
+    width: 140px;
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .game-image {
+    height: 110px;
+  }
+
+  .game-grid {
+    gap: 15px;
+    padding: 0 5px;
+  }
+
+  section.game-section {
+    padding: 40px 5px;
+  }
+
+  .parent-content {
+    padding: 8px;
+    gap: 15px;
+  }
+
+  .info-box, .dyslexia-box {
+    padding: 15px;
+  }
+
+  .info-box h3, .dyslexia-box h3 {
+    font-size: 1.3rem;
+  }
+
+  .info-box p, .dyslexia-box p {
+    font-size: 14px;
+  }
+
+  .game-section h2 {
+    font-size: 1.8rem;
+  }
+
+  /* Disable scroll snap on very small screens for better usability */
+  .scroll-container {
+    scroll-snap-type: none;
+  }
+
+  .scroll-container > section,
+  .scroll-container > .hero-section {
+    scroll-snap-align: none;
+    min-height: auto;
+  }
+
+  section.game-section {
+    min-height: auto;
+  }
+
+  footer {
+    min-height: auto;
+    padding: 40px 20px;
+  }
 }
 
-section {
-  position: relative;
-  z-index: 1;
-  scroll-margin-top: 80px;
-} 
+/* Landscape orientation adjustments */
+@media (max-width: 900px) and (orientation: landscape) {
+  .hero-content h1 {
+    font-size: 36px;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+
+  .section-buttons {
+    margin-top: 20px;
+  }
+
+  .section-buttons a,
+  .section-buttons button {
+    padding: 8px 20px;
+    font-size: 16px;
+  }
+
+  /* Adjust scroll snap for landscape */
+  .scroll-container {
+    scroll-snap-type: y proximity;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .game-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Ensure scroll snap works on all sections */
+.scroll-container > section,
+.scroll-container > .hero-section,
+.scroll-container > footer {
+  scroll-snap-align: start;
+}
 
 /* Navigation Bar Container */
-
-
 .nav-bar {
   position: absolute;
   top: 20px;
@@ -356,8 +589,8 @@ section {
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(27, 87, 116, 0.3);
   transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-  opacity: 1; /* ✅ Always visible */
-  transform: scale(1); /* ✅ Default size */
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* Subtle hover animation */
@@ -367,7 +600,7 @@ section {
   box-shadow: 0 6px 14px rgba(27, 87, 116, 0.4);
 }
 
-/* Responsive for mobile */
+/* Navigation responsive */
 @media screen and (max-width: 768px) {
   .nav-bar {
     top: 15px;
@@ -382,6 +615,19 @@ section {
   }
 }
 
+@media screen and (max-width: 480px) {
+  .nav-bar {
+    top: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .nav-bar button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+
 /* Fade and slide-in animation just for the nav-bar container */
 @keyframes fadeSlideIn {
   0% {
@@ -391,5 +637,368 @@ section {
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Profile Icon */
+.profile-icon-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Profile Info */
+.profile-info h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-role {
+  margin-top: 4px;
+  color: #7f8c8d;
+  font-size: 13px;
+  text-transform: capitalize;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+/* Profile Details */
+.profile-details {
+  padding: 15px 20px;
+}
+
+.profile-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  color: #34495e;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.profile-item:last-child {
+  border-bottom: none;
+}
+
+.profile-item span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Profile Actions */
+.profile-actions {
+  padding: 15px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.logout-button {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logout-button:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Login/Register Button Positioned Top Right */
+.nav-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.nav-right > button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.nav-right > button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.login-btn {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-btn:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.profile-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  min-width: 280px;
+  z-index: 1001;
+  animation: dropdownSlide 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px 12px 0 0;
+}
+
+.welcome-message {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Profile responsive design */
+@media (max-width: 768px) {
+  .nav-button-container {
+    top: 15px;
+    right: 15px;
+  }
+
+  .nav-right {
+    top: 15px;
+    right: 15px;
+  }
+
+  .nav-right > button {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .login-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .profile-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profile-icon-large {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .profile-details {
+    padding: 12px 15px;
+  }
+
+  .profile-actions {
+    padding: 12px 15px;
+  }
+
+  .profile-dropdown {
+    min-width: 250px;
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-button-container {
+    top: 12px;
+    right: 12px;
+  }
+
+  .nav-right {
+    top: 12px;
+    right: 12px;
+  }
+
+  .nav-right > button {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .login-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .profile-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .profile-icon-large {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .profile-details {
+    padding: 10px 12px;
+  }
+
+  .profile-actions {
+    padding: 10px 12px;
+  }
+
+  .profile-dropdown {
+    min-width: 220px;
+    right: -20px;
+  }
+
+  .profile-header {
+    padding: 15px;
+  }
+
+  .welcome-message {
+    font-size: 14px;
+  }
+}
+
+/* Therapist box styles */
+.therapist-box {
+  max-width: 700px;
+  margin: 30px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.therapist-box h3 {
+  font-size: 2rem;
+  color: #2e86ab;
+  margin-bottom: 15px;
+}
+
+.therapist-box p.caption {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Responsive therapist box */
+@media (max-width: 768px) {
+  .therapist-box {
+    margin: 20px auto;
+    padding: 25px;
+  }
+
+  .therapist-box h3 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .therapist-box {
+    margin: 15px auto;
+    padding: 20px;
+  }
+
+  .therapist-box h3 {
+    font-size: 1.5rem;
   }
 }

@@ -1,0 +1,76 @@
+.therapist-list-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background-color: #f0f4f8;
+  text-align: center;
+}
+
+.therapist-list-page h1 {
+  font-size: 36px;
+  color: #2e86ab;
+  margin-bottom: 40px;
+}
+
+.therapist-card {
+  background: white;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  text-align: left;
+  animation: fadeIn 0.5s ease;
+}
+
+.therapist-card h2 {
+  color: #2e86ab;
+  margin-bottom: 15px;
+}
+
+.therapist-card p {
+  margin: 10px 0;
+  color: #555;
+}
+
+.choose-button {
+  margin-top: 20px;
+  padding: 15px 25px;
+  background-color: #28a745; /* green */
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.choose-button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
+
+.choose-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.back-button {
+  padding: 12px 20px;
+  background-color: #2e86ab;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.back-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

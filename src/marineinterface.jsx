@@ -107,7 +107,7 @@ const MarineInterface = () => {
           // Navigate to the view page
           //window.location.href = 'view.html';
           // Or if using React Router:
-          navigate('/Homepage');
+          navigate('/');
         };
       }
     }

@@ -68,6 +68,11 @@ export default function StarfishGame() {
   const expressionRef = useRef("neutral");
   const [faceMeshLoaded, setFaceMeshLoaded] = useState(false);
   const navigate = useNavigate();
+  const cameraRef = useRef(null);
+
+  const [currentExpression, setCurrentExpression] = useState("neutral");
+
+
 
   const myComponentStyle = {
     backgroundImage: 'url("images/download.jpg")',
@@ -243,29 +248,371 @@ export default function StarfishGame() {
       .catch(err => console.error('Webcam error:', err));
   };
 
-  const stopWebcam = () => {
-    if (webcamRef.current?.srcObject) {
-      webcamRef.current.srcObject.getTracks().forEach(track => track.stop());
-    }
-  };
+ const stopWebcam = () => {
+  // Stop MediaPipe Camera (this is what you need)
+  if (cameraRef.current) {
+    cameraRef.current.stop();
+    cameraRef.current = null;
+    console.log("✅ MediaPipe camera stopped");
+  }
 
-  const sendLandmarksToBackend = async (landmarks) => {
-    try {
-      const response = await fetch('http://your-backend-url/api/landmarks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ landmarks }),
-      });
+  // Also stop any direct stream if it exists
+  if (webcamRef.current?.srcObject) {
+    webcamRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    webcamRef.current.srcObject = null;
+    console.log("✅ Raw webcam stream stopped");
+  }
+};
+
+
+// const sendLandmarksToBackend = async (landmarks) => {
+//   try {
+//     // Ensure we only use 468 facial landmarks (ignore iris, etc.)
+//     const sliced = landmarks.slice(0, 468);
+
+//     const paddedLandmarks = sliced.map(landmark => {
+//       const arr = [landmark.x, landmark.y, landmark.z];
+//       while (arr.length < 64) arr.push(0); // pad to 64-dim
+//       return arr;
+//     });
+
+//     // Extra safety check
+//     if (paddedLandmarks.length !== 468) {
+//       console.warn("⚠️ Landmarks length after slicing:", paddedLandmarks.length);
+//       return;
+//     }
+
+//     const response = await fetch("http://localhost:8000/predict", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ landmarks: paddedLandmarks }),
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+//       expressionRef.current = data.prediction_label || "neutral";
+//       setCurrentExpression(data.prediction_label);
+//       console.log("🧠 Expression:", data.prediction_label);
+//     } else {
+//       console.error("❌ Prediction failed:", await response.text());
+//     }
+//   } catch (error) {
+//     console.error("❌ Error sending landmarks:", error);
+//   }
+// };
+
+
+// const sendLandmarksToBackend = async (landmarks) => {
+//   try {
+//     console.log("🔍 Original landmarks length:", landmarks.length);
+//     console.log("📊 Sample landmark structure:", landmarks[0]);
+    
+//     // Ensure we only use 468 facial landmarks (ignore iris, etc.)
+//     const sliced = landmarks.slice(0, 468);
+//     console.log("✂️ After slicing to 468:", sliced.length);
+    
+//     // Validate landmarks structure
+//     if (!sliced[0] || typeof sliced[0].x === 'undefined') {
+//       console.error("❌ Invalid landmark structure");
+//       return;
+//     }
+    
+//     const paddedLandmarks = sliced.map((landmark, index) => {
+//       // Basic validation
+//       if (!landmark || typeof landmark.x === 'undefined') {
+//         console.warn(`⚠️ Invalid landmark at index ${index}:`, landmark);
+//         return new Array(64).fill(0);
+//       }
       
-      if (response.ok) {
-        const data = await response.json();
-        expressionRef.current = data.expression || "neutral";
-        console.log("Expression from model:", data.expression);
-      }
-    } catch (error) {
-      console.error("❌ Failed to send landmarks:", error);
+//       // Handle MediaPipe landmarks (normalized coordinates)
+//       let x = landmark.x || 0;
+//       let y = landmark.y || 0;
+//       let z = landmark.z || 0;
+      
+//       // Check if coordinates are in normalized range [0,1] or pixel coordinates
+//       // MediaPipe face landmarks are typically normalized
+//       if (x > 1 || y > 1) {
+//         console.warn("⚠️ Coordinates seem to be in pixel space, consider normalizing");
+//       }
+      
+//       // Create feature vector - you might need to adjust this based on your training data
+//       const arr = [
+//         x, y, z,                          // Basic coordinates
+//         landmark.visibility || 0,         // Visibility if available
+//         // Add more features if your model was trained with them
+//         x * x, y * y, z * z,             // Squared terms
+//         x * y, y * z, x * z,             // Cross terms
+//         Math.sqrt(x*x + y*y + z*z),      // Distance from origin
+//         Math.atan2(y, x),                 // Angle in xy plane
+//         Math.asin(z / Math.sqrt(x*x + y*y + z*z)) || 0, // Elevation angle
+//       ];
+      
+//       // Pad to 64 dimensions with zeros
+//       while (arr.length < 64) {
+//         arr.push(0);
+//       }
+      
+//       // Truncate if somehow longer than 64
+//       return arr.slice(0, 64);
+//     });
+    
+//     // Final validation
+//     if (paddedLandmarks.length !== 468) {
+//       console.error(`❌ Wrong number of landmarks: ${paddedLandmarks.length}, expected 468`);
+//       return;
+//     }
+    
+//     // Check for NaN or invalid values
+//     const hasInvalidValues = paddedLandmarks.some(landmark => 
+//       landmark.some(val => isNaN(val) || !isFinite(val))
+//     );
+    
+//     if (hasInvalidValues) {
+//       console.warn("⚠️ Found NaN or infinite values in landmarks");
+//       // Clean up invalid values
+//       paddedLandmarks.forEach(landmark => {
+//         for (let i = 0; i < landmark.length; i++) {
+//           if (isNaN(landmark[i]) || !isFinite(landmark[i])) {
+//             landmark[i] = 0;
+//           }
+//         }
+//       });
+//     }
+    
+//     console.log("📤 Sending landmarks with shape:", paddedLandmarks.length, "x", paddedLandmarks[0].length);
+//     console.log("🔢 Sample landmark vector:", paddedLandmarks[0].slice(0, 10), "...");
+    
+//     const response = await fetch("http://localhost:8000/predict", {
+//       method: "POST",
+//       headers: { 
+//         "Content-Type": "application/json",
+//         "Accept": "application/json"
+//       },
+//       body: JSON.stringify({ landmarks: paddedLandmarks }),
+//     });
+    
+//     if (response.ok) {
+//       const data = await response.json();
+//       console.log("✅ Backend response:", data);
+      
+//       expressionRef.current = data.prediction_label || "neutral";
+//       setCurrentExpression(data.prediction_label);
+      
+//       console.log(`🧠 Expression: ${data.prediction_label} (confidence: ${(data.confidence * 100).toFixed(1)}%)`);
+      
+//       // Log all probabilities for debugging
+//       if (data.all_probabilities) {
+//         console.log("📊 All class probabilities:", data.all_probabilities);
+//       }
+//     } else {
+//       const errorText = await response.text();
+//       console.error("❌ Prediction failed:", response.status, errorText);
+      
+//       // Try to parse error details
+//       try {
+//         const errorData = JSON.parse(errorText);
+//         console.error("📋 Error details:", errorData);
+//       } catch (e) {
+//         console.error("📋 Raw error:", errorText);
+//       }
+//     }
+//   } catch (error) {
+//     console.error("❌ Error sending landmarks:", error);
+//     console.error("📋 Error stack:", error.stack);
+//   }
+// };
+
+// // Optional: Add a function to test the connection
+// const testBackendConnection = async () => {
+//   try {
+//     const response = await fetch("http://localhost:8000/health");
+//     if (response.ok) {
+//       const data = await response.json();
+//       console.log("✅ Backend health check:", data);
+//       return true;
+//     } else {
+//       console.error("❌ Backend health check failed:", response.status);
+//       return false;
+//     }
+//   } catch (error) {
+//     console.error("❌ Cannot connect to backend:", error);
+//     return false;
+//   }
+// };
+
+// // Call this when your app starts to verify backend connection
+// testBackendConnection();
+
+
+const sendLandmarksToBackend = async (landmarks) => {
+  try {
+    console.log("🔍 Original landmarks length:", landmarks.length);
+    console.log("📊 Sample landmark structure:", landmarks[0]);
+    
+    // Ensure we only use 468 facial landmarks (ignore iris, etc.)
+    const sliced = landmarks.slice(0, 468);
+    console.log("✂️ After slicing to 468:", sliced.length);
+    
+    // Validate landmarks structure
+    if (!sliced[0] || typeof sliced[0].x === 'undefined') {
+      console.error("❌ Invalid landmark structure");
+      return;
     }
-  };
+    
+    const paddedLandmarks = sliced.map((landmark, index) => {
+      // Basic validation
+      if (!landmark || typeof landmark.x === 'undefined') {
+        console.warn(`⚠️ Invalid landmark at index ${index}:`, landmark);
+        return new Array(64).fill(0);
+      }
+      
+      // Handle MediaPipe landmarks (normalized coordinates)
+      let x = landmark.x || 0;
+      let y = landmark.y || 0;
+      let z = landmark.z || 0;
+      
+      // Check if coordinates are in normalized range [0,1] or pixel coordinates
+      // MediaPipe face landmarks are typically normalized
+      if (x > 1 || y > 1) {
+        console.warn("⚠️ Coordinates seem to be in pixel space, consider normalizing");
+      }
+      
+      // Create feature vector - you might need to adjust this based on your training data
+      const arr = [
+        x, y, z,                          // Basic coordinates
+        landmark.visibility || 0,         // Visibility if available
+        // Add more features if your model was trained with them
+        x * x, y * y, z * z,             // Squared terms
+        x * y, y * z, x * z,             // Cross terms
+        Math.sqrt(x*x + y*y + z*z),      // Distance from origin
+        Math.atan2(y, x),                 // Angle in xy plane
+        Math.asin(z / Math.sqrt(x*x + y*y + z*z)) || 0, // Elevation angle
+      ];
+      
+      // Pad to 64 dimensions with zeros
+      while (arr.length < 64) {
+        arr.push(0);
+      }
+      
+      // Truncate if somehow longer than 64
+      return arr.slice(0, 64);
+    });
+    
+    // Final validation
+    if (paddedLandmarks.length !== 468) {
+      console.error(`❌ Wrong number of landmarks: ${paddedLandmarks.length}, expected 468`);
+      return;
+    }
+    
+    // Check for NaN or invalid values
+    const hasInvalidValues = paddedLandmarks.some(landmark => 
+      landmark.some(val => isNaN(val) || !isFinite(val))
+    );
+    
+    if (hasInvalidValues) {
+      console.warn("⚠️ Found NaN or infinite values in landmarks");
+      // Clean up invalid values
+      paddedLandmarks.forEach(landmark => {
+        for (let i = 0; i < landmark.length; i++) {
+          if (isNaN(landmark[i]) || !isFinite(landmark[i])) {
+            landmark[i] = 0;
+          }
+        }
+      });
+    }
+    
+    console.log("📤 Sending landmarks with shape:", paddedLandmarks.length, "x", paddedLandmarks[0].length);
+    console.log("🔢 Sample landmark vector:", paddedLandmarks[0].slice(0, 10), "...");
+    
+    const response = await fetch("http://localhost:8000/predict", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ landmarks: paddedLandmarks }),
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log("✅ Backend response:", data);
+
+      // ADD THESE DEBUG LINES:
+      console.log("🔍 prediction_label:", data.prediction_label);
+      console.log("🔍 prediction_index:", data.prediction_index);
+      console.log("🔍 Type of prediction_label:", typeof data.prediction_label);
+      
+      expressionRef.current = data.prediction_label || "neutral";
+      setCurrentExpression(data.prediction_label);
+
+      console.log("🔍 Set currentExpression to:", data.prediction_label); // ADD THIS
+      
+      console.log(`🧠 Expression: ${data.prediction_label} (confidence: ${(data.confidence * 100).toFixed(1)}%)`);
+      
+      // Log all probabilities for debugging
+      if (data.emotion_probabilities) {
+        console.log("🎭 Emotion probabilities:", data.emotion_probabilities);
+        // Log top 3 emotions
+        const sortedEmotions = Object.entries(data.emotion_probabilities)
+          .sort(([,a], [,b]) => b - a)
+          .slice(0, 3);
+        console.log("🏆 Top 3 emotions:", sortedEmotions.map(([emotion, prob]) => 
+          `${emotion}: ${(prob * 100).toFixed(1)}%`
+        ).join(', '));
+      }
+      
+      if (data.all_probabilities) {
+        console.log("📊 Raw probabilities:", data.all_probabilities);
+      }
+    } else {
+      const errorText = await response.text();
+      console.error("❌ Prediction failed:", response.status, errorText);
+      
+      // Try to parse error details
+      try {
+        const errorData = JSON.parse(errorText);
+        console.error("📋 Error details:", errorData);
+      } catch (e) {
+        console.error("📋 Raw error:", errorText);
+      }
+    }
+  } catch (error) {
+    console.error("❌ Error sending landmarks:", error);
+    console.error("📋 Error stack:", error.stack);
+  }
+};
+
+// Optional: Add a function to test the connection and check emotion mapping
+const testBackendConnection = async () => {
+  try {
+    const response = await fetch("http://localhost:8000/health");
+    if (response.ok) {
+      const data = await response.json();
+      console.log("✅ Backend health check:", data);
+      
+      // Also check emotion mapping
+      const emotionsResponse = await fetch("http://localhost:8000/emotions");
+      if (emotionsResponse.ok) {
+        const emotionsData = await emotionsResponse.json();
+        console.log("🎭 Emotion mapping:", emotionsData);
+      }
+      
+      return true;
+    } else {
+      console.error("❌ Backend health check failed:", response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error("❌ Cannot connect to backend:", error);
+    return false;
+  }
+};
+
+// Call this when your app starts to verify backend connection
+// testBackendConnection();
+
+
+
 
   // NEW: Initialize FaceMesh using global window object
   const initFaceMesh = () => {
@@ -308,12 +655,15 @@ export default function StarfishGame() {
           height: 480,
         });
         camera.start();
+        cameraRef.current = camera; // 👈 Save the camera so we can stop it later
       }
 
       console.log("✅ FaceMesh initialized successfully");
     } catch (error) {
       console.error("❌ Failed to initialize FaceMesh:", error);
     }
+
+
   };
 
   // Initialize FaceMesh when MediaPipe is loaded
@@ -346,7 +696,15 @@ export default function StarfishGame() {
       )}
 
       <div style={myComponentStyle}>
-        <div id="score-board">Score: {score} ⭐</div>
+
+      <div style={{ position: "absolute", top: "10px", right: "10px", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px" }}>
+  <div id="score-board">Score: {score} ⭐</div>
+  <div id="emotion-box">Emotion: {currentExpression}</div>
+</div>
+
+
+
+      {/*<div id="score-board">Score: {score} ⭐</div>*/}
 
         <img id="fish" className="marine" src="/images/fish1.png" style={{ top: '30%', left: '10%' }} />
         <img id="starfish-animal" className="marine" src="images/starfish.png" style={{ bottom: '10%', left: '10%' }} />
@@ -403,7 +761,15 @@ export default function StarfishGame() {
           <div id="buttons">
             <button onClick={handleNext}>Next</button>
             <button onClick={checkAnswer}>Check</button>
-            <button onClick={() => navigate('/Homepage')}>Exit</button>
+            <button
+              onClick={() => {
+                stopWebcam();        // Stop the webcam (MediaPipe + raw stream)
+                navigate('/');       // Then navigate to the home page
+            }}
+        >
+        Exit
+        </button>
+
           </div>
         </div>
 
