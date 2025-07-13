@@ -185,103 +185,657 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+
+// import Homepage from './Homepage';
+// import Loginpage from './Loginpage';
+// import MarineInterface from './marineinterface';
+// import Starfishgame from './Starfishgame';
+// import GameReportGenerator from './GameReportGenerator';
+// import TherapistDashboard from './components/TherapistDashboard';
+// import TherapistListPage from './TherapistListPage';
+// import { SuperAdminDashboard } from './SuperAdminDashboard';
+
+// function App() {
+//   const [user, setUser] = useState(null);
+//   const navigate = useNavigate();
+//   const location = useLocation();
+
+//   // Rehydrate user from localStorage on initial mount
+//   useEffect(() => {
+//     const storedUserStr = localStorage.getItem('user');
+//     if (storedUserStr) {
+//       try {
+//         const storedUser = JSON.parse(storedUserStr);
+//         if (storedUser && storedUser.email && storedUser.role) {
+//           setUser(storedUser);
+//         } else {
+//           localStorage.removeItem('user'); // remove invalid data
+//         }
+//       } catch (err) {
+//         console.error("Failed to parse stored user:", err);
+//         localStorage.removeItem('user');
+//       }
+//     }
+//   }, []);
+
+//   // Redirect user after login based on role
+//   useEffect(() => {
+//   if (user) {
+//     if (
+//       user.role === 'therapist' &&
+//       location.pathname !== '/dashboard'
+//     ) {
+//       navigate('/dashboard');
+//     } else if (
+//       user.role === 'child' &&
+//       location.pathname !== '/' &&
+//       location.pathname !== '/listoftherapists' // ✅ allow this page
+//     ) {
+//       navigate('/');
+//     }else if (
+//   user.role === 'superadmin' &&
+//   location.pathname !== '/superadmindashboard'
+// ) {
+//   navigate('/superadmindashboard');
+// }
+
+//   }
+// }, [user, navigate, location.pathname]);
+
+
+//   const handleLogout = () => {
+//     console.log("🚨 Logging out...");
+//     localStorage.clear();
+//     setUser(null);
+//     navigate('/'); // navigate to homepage after logout
+//   };
+
+//   return (
+//     <>
+
+//       <Routes>
+//         {/* Public Routes */}
+//         <Route path="/" element={<Homepage user={user} handleLogout={handleLogout} />} />
+//         <Route path="/login" element={<Loginpage onLogin={setUser} />} />
+//         <Route path="/marineinterface" element={<MarineInterface />} />
+//         <Route path="/Starfishgame" element={<Starfishgame />} />
+//         <Route path="/report" element={<GameReportGenerator />} />
+//         <Route path="/listoftherapists" element={<TherapistListPage />} />
+//         <Route path="/superadmindashboard" element={<SuperAdminDashboard />} />
+
+
+//         {/* Protected Therapist Dashboard */}
+//         <Route
+//           path="/dashboard"
+//           element={
+//             user ? (
+//               user.role === "therapist" ? (
+//                 <TherapistDashboard userId={user._id} />
+//               ) : (
+//                 <p>You are not authorized to access this dashboard.</p>
+//               )
+//             ) : (
+//               <Navigate to="/login" />
+//             )
+//           }
+//         />
+        
+//       </Routes>
+
+//     </>
+//   );
+// }
+
+// export default function AppWrapper() {
+//   return (
+//     <Router>
+//       <App />
+//     </Router>
+//   );
+// }
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import {
+//   BrowserRouter as Router,
+//   Routes,
+//   Route,
+//   Navigate,
+//   useNavigate,
+//   useLocation
+// } from 'react-router-dom';
+
+// import Homepage from './Homepage';
+// import Loginpage from './Loginpage';
+// import MarineInterface from './marineinterface';
+// import Starfishgame from './Starfishgame';
+// import GameReportGenerator from './GameReportGenerator';
+// import TherapistDashboard from './components/TherapistDashboard';
+// import TherapistListPage from './TherapistListPage';
+// import TherapistStatusPage from './TherapistStatusPage'; // ✅ new
+// import { SuperAdminDashboard } from './SuperAdminDashboard';
+
+// function App() {
+//   const [user, setUser] = useState(() => {
+//     const storedUserStr = localStorage.getItem('user');
+//     if (storedUserStr) {
+//       try {
+//         const storedUser = JSON.parse(storedUserStr);
+//         if (storedUser && storedUser.email && storedUser.role) {
+//           return storedUser;
+//         } else {
+//           localStorage.removeItem('user');
+//         }
+//       } catch (err) {
+//         console.error("Failed to parse stored user:", err);
+//         localStorage.removeItem('user');
+//       }
+//     }
+//     return null;
+//   });
+
+//   const navigate = useNavigate();
+//   const location = useLocation();
+
+
+
+
+//   // Rehydrate user from localStorage on mount
+//   useEffect(() => {
+//     const storedUserStr = localStorage.getItem('user');
+//     if (storedUserStr) {
+//       try {
+//         const storedUser = JSON.parse(storedUserStr);
+//         if (storedUser && storedUser.email && storedUser.role) {
+//           setUser(storedUser);
+//         } else {
+//           localStorage.removeItem('user');
+//         }
+//       } catch (err) {
+//         console.error("Failed to parse stored user:", err);
+//         localStorage.removeItem('user');
+//       }
+//     }
+//   }, []);
+
+//   // Role-based redirection after login
+//   useEffect(() => {
+//   if (!user) return; // don't do anything if no user yet
+
+//   let targetPath = null;
+
+//   if (user.role === 'therapist') {
+//     if (user.status !== 'approved' && location.pathname !== '/therapist-status') {
+//       targetPath = '/therapist-status';
+//     } else if (user.status === 'approved' && location.pathname !== '/dashboard') {
+//       targetPath = '/dashboard';
+//     }
+//   } else if (user.role === 'child' && !['/', '/listoftherapists'].includes(location.pathname)) {
+//     targetPath = '/';
+//   } else if (user.role === 'superadmin' && location.pathname !== '/superadmindashboard') {
+//     targetPath = '/superadmindashboard';
+//   }
+
+//   if (targetPath && location.pathname !== targetPath) {
+//     navigate(targetPath, { replace: true }); // avoid stacking history
+//   }
+// }, [user]); // 🚨 keep this dependency array simple with just user
+
+
+
+//   const handleLogout = () => {
+//     console.log("🚨 Logging out...");
+//     localStorage.clear();
+//     setUser(null);
+//     navigate('/');
+//   };
+
+//   return (
+//     <>
+//       <Routes>
+//         {/* Public Routes */}
+//         <Route path="/" element={<Homepage user={user} handleLogout={handleLogout} />} />
+//         <Route path="/login" element={<Loginpage onLogin={setUser} navigate={navigate} />} />
+//         <Route path="/marineinterface" element={<MarineInterface />} />
+//         <Route path="/Starfishgame" element={<Starfishgame />} />
+//         <Route path="/report" element={<GameReportGenerator />} />
+//         <Route path="/listoftherapists" element={<TherapistListPage />} />
+//         <Route path="/superadmindashboard" element={<SuperAdminDashboard />} />
+
+//         {/* Therapist waiting for approval */}
+//         <Route path="/therapist-status" element={<TherapistStatusPage />} />
+
+//         {/* Therapist Dashboard (Protected) */}
+//         <Route
+//           path="/dashboard"
+//           element={
+//             user ? (
+//               user.role === "therapist" ? (
+//                 user.status === "approved" ? (
+//                   <TherapistDashboard userId={user._id} />
+//                 ) : (
+//                   <Navigate to="/therapist-status" />
+//                 )
+//               ) : (
+//                 <p>You are not authorized to access this dashboard.</p>
+//               )
+//             ) : (
+//               <Navigate to="/login" />
+//             )
+//           }
+//         />
+//       </Routes>
+//     </>
+//   );
+// }
+
+// export default function AppWrapper() {
+//   return (
+//     <Router>
+//       <App />
+//     </Router>
+//   );
+// }
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import {
+//   BrowserRouter as Router,
+//   Routes,
+//   Route,
+//   Navigate,
+//   useNavigate,
+//   useLocation
+// } from 'react-router-dom';
+
+// import {
+//   Homepage,
+//   Loginpage,
+//   MarineInterface,
+//   Starfishgame,
+//   GameReportGenerator,
+//   TherapistDashboard,
+//   TherapistListPage,
+//   TherapistStatusPage,
+//   SuperAdminDashboard,
+// } from './def';
+
+// function App() {
+//   const [user, setUser] = useState(() => {
+//     const storedUserStr = localStorage.getItem('user');
+//     if (storedUserStr) {
+//       try {
+//         const storedUser = JSON.parse(storedUserStr);
+//         if (storedUser && storedUser.email && storedUser.role) {
+//           return storedUser;
+//         } else {
+//           localStorage.removeItem('user');
+//         }
+//       } catch (err) {
+//         console.error("Failed to parse stored user:", err);
+//         localStorage.removeItem('user');
+//       }
+//     }
+//     return null;
+//   });
+
+//   const navigate = useNavigate();
+//   const location = useLocation();
+
+//   // Rehydrate user from localStorage on mount
+//   useEffect(() => {
+//     const storedUserStr = localStorage.getItem('user');
+//     if (storedUserStr) {
+//       try {
+//         const storedUser = JSON.parse(storedUserStr);
+//         if (storedUser && storedUser.email && storedUser.role) {
+//           setUser(storedUser);
+//         } else {
+//           localStorage.removeItem('user');
+//         }
+//       } catch (err) {
+//         console.error("Failed to parse stored user:", err);
+//         localStorage.removeItem('user');
+//       }
+//     }
+//   }, []);
+
+//   // Role-based redirection after login
+//   useEffect(() => {
+//     if (!user) return;
+
+//     let targetPath = null;
+
+//     if (user.role === 'therapist') {
+//       if (user.status !== 'approved' && location.pathname !== '/therapist-status') {
+//         targetPath = '/therapist-status';
+//       } else if (user.status === 'approved' && location.pathname !== '/dashboard') {
+//         targetPath = '/dashboard';
+//       }
+//     } else if (user.role === 'child' && !['/', '/listoftherapists'].includes(location.pathname)) {
+//       targetPath = '/';
+//     } else if (user.role === 'superadmin' && location.pathname !== '/superadmindashboard') {
+//       targetPath = '/superadmindashboard';
+//     }
+
+//     if (targetPath && location.pathname !== targetPath) {
+//       navigate(targetPath, { replace: true });
+//     }
+//   }, [user]);
+
+//   const handleLogout = () => {
+//     console.log("🚨 Logging out...");
+//     localStorage.clear();
+//     setUser(null);
+//     navigate('/');
+//   };
+
+//   return (
+//     <>
+//       <Routes>
+//         {/* Public Routes */}
+//         <Route path="/" element={<Homepage user={user} handleLogout={handleLogout} />} />
+//         <Route path="/login" element={<Loginpage onLogin={setUser} navigate={navigate} />} />
+//         <Route path="/marineinterface" element={<MarineInterface />} />
+//         <Route path="/Starfishgame" element={<Starfishgame />} />
+//         <Route path="/report" element={<GameReportGenerator />} />
+//         <Route path="/listoftherapists" element={<TherapistListPage />} />
+//         <Route path="/superadmindashboard" element={<SuperAdminDashboard />} />
+
+//         {/* Therapist waiting for approval */}
+//         <Route path="/therapist-status" element={<TherapistStatusPage />} />
+
+//         {/* Therapist Dashboard (Protected) */}
+//         <Route
+//           path="/dashboard"
+//           element={
+//             user ? (
+//               user.role === "therapist" ? (
+//                 user.status === "approved" ? (
+//                   <TherapistDashboard userId={user._id} />
+//                 ) : (
+//                   <Navigate to="/therapist-status" />
+//                 )
+//               ) : (
+//                 <p>You are not authorized to access this dashboard.</p>
+//               )
+//             ) : (
+//               <Navigate to="/login" />
+//             )
+//           }
+//         />
+//       </Routes>
+//     </>
+//   );
+// }
+
+// export default function AppWrapper() {
+//   return (
+//     <Router>
+//       <App />
+//     </Router>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation
+} from 'react-router-dom';
 
-import Homepage from './Homepage';
-import Loginpage from './Loginpage';
-import MarineInterface from './marineinterface';
-import Starfishgame from './Starfishgame';
-import GameReportGenerator from './GameReportGenerator';
-import TherapistDashboard from './components/TherapistDashboard';
-import TherapistListPage from './TherapistListPage';
+import {
+  Homepage,
+  Loginpage,
+  MarineInterface,
+  Starfishgame,
+  GameReportGenerator,
+  TherapistDashboard,
+  TherapistListPage,
+  TherapistStatusPage,
+  SuperAdminDashboard,
+} from './def';
 
-function App() {
-  const [user, setUser] = useState(null);
+export default function MainRouter() {
+  const [user, setUser] = useState(() => {
+    const storedUserStr = localStorage.getItem('user');
+    if (storedUserStr) {
+      try {
+        const storedUser = JSON.parse(storedUserStr);
+        if (storedUser?.email && storedUser?.role) {
+          return storedUser;
+        }
+      } catch (err) {
+        localStorage.removeItem('user');
+      }
+    }
+    return null;
+  });
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Rehydrate user from localStorage on initial mount
   useEffect(() => {
     const storedUserStr = localStorage.getItem('user');
     if (storedUserStr) {
       try {
         const storedUser = JSON.parse(storedUserStr);
-        if (storedUser && storedUser.email && storedUser.role) {
+        if (storedUser?.email && storedUser?.role) {
           setUser(storedUser);
         } else {
-          localStorage.removeItem('user'); // remove invalid data
+          localStorage.removeItem('user');
         }
       } catch (err) {
-        console.error("Failed to parse stored user:", err);
         localStorage.removeItem('user');
       }
     }
   }, []);
 
-  // Redirect user after login based on role
   useEffect(() => {
-  if (user) {
-    if (
-      user.role === 'therapist' &&
-      location.pathname !== '/dashboard'
-    ) {
-      navigate('/dashboard');
-    } else if (
-      user.role === 'child' &&
-      location.pathname !== '/' &&
-      location.pathname !== '/listoftherapists' // ✅ allow this page
-    ) {
-      navigate('/');
-    }
-  }
-}, [user, navigate, location.pathname]);
+    if (!user) return;
 
+    let targetPath = null;
+
+    if (user.role === 'therapist') {
+      if (user.status !== 'approved' && location.pathname !== '/therapist-status') {
+        targetPath = '/therapist-status';
+      } else if (user.status === 'approved' && location.pathname !== '/dashboard') {
+        targetPath = '/dashboard';
+      }
+    } else if (user.role === 'child' && !['/', '/listoftherapists'].includes(location.pathname)) {
+      targetPath = '/';
+    } else if (user.role === 'superadmin' && location.pathname !== '/superadmindashboard') {
+      targetPath = '/superadmindashboard';
+    }
+
+    if (targetPath && location.pathname !== targetPath) {
+      navigate(targetPath, { replace: true });
+    }
+  }, [user]);
 
   const handleLogout = () => {
-    console.log("🚨 Logging out...");
     localStorage.clear();
     setUser(null);
-    navigate('/'); // navigate to homepage after logout
+    navigate('/');
   };
 
   return (
-    <>
-
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Homepage user={user} handleLogout={handleLogout} />} />
-        <Route path="/login" element={<Loginpage onLogin={setUser} />} />
-        <Route path="/marineinterface" element={<MarineInterface />} />
-        <Route path="/Starfishgame" element={<Starfishgame />} />
-        <Route path="/report" element={<GameReportGenerator />} />
-        <Route path="/listoftherapists" element={<TherapistListPage />} />
-
-
-        {/* Protected Therapist Dashboard */}
-        <Route
-          path="/dashboard"
-          element={
-            user ? (
-              user.role === "therapist" ? (
-                <TherapistDashboard userId={user._id} />
-              ) : (
-                <p>You are not authorized to access this dashboard.</p>
-              )
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/" element={<Homepage user={user} handleLogout={handleLogout} />} />
+      <Route path="/login" element={<Loginpage onLogin={setUser} />} />
+      <Route path="/marineinterface" element={<MarineInterface />} />
+      <Route path="/Starfishgame" element={<Starfishgame />} />
+      <Route path="/report" element={<GameReportGenerator />} />
+      <Route path="/listoftherapists" element={<TherapistListPage />} />
+      <Route path="/superadmindashboard" element={<SuperAdminDashboard />} />
+      <Route path="/therapist-status" element={<TherapistStatusPage />} />
+      <Route
+        path="/dashboard"
+        element={
+          user?.role === "therapist" && user?.status === "approved" ? (
+            <TherapistDashboard userId={user._id} />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+    </Routes>
   );
 }
 
-export default function AppWrapper() {
-  return (
-    <Router>
-      <App />
-    </Router>
-  );
-}
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+
+// import Homepage from './Homepage';
+// import Loginpage from './Loginpage';
+// import MarineInterface from './marineinterface';
+// import Starfishgame from './Starfishgame';
+// import GameReportGenerator from './GameReportGenerator';
+// import TherapistDashboard from './components/TherapistDashboard';
+// import TherapistListPage from './TherapistListPage';
+// import { SuperAdminDashboard } from './SuperAdminDashboard';
+
+// function App() {
+//   const [user, setUser] = useState(null);
+//   const navigate = useNavigate();
+//   const location = useLocation();
+
+//   // Load user from localStorage when the app starts
+//   useEffect(() => {
+//     const storedUserStr = localStorage.getItem('user');
+//     if (storedUserStr) {
+//       try {
+//         const storedUser = JSON.parse(storedUserStr);
+//         if (storedUser && storedUser.email && storedUser.role) {
+//           setUser(storedUser);
+//         } else {
+//           localStorage.removeItem('user');
+//         }
+//       } catch (err) {
+//         console.error("Failed to parse stored user:", err);
+//         localStorage.removeItem('user');
+//       }
+//     }
+//   }, []);
+
+//   // Redirect user after login based on their role
+// useEffect(() => {
+//   if (!user) {
+//     // User not logged in, send them to landing page unless already there
+//     if (location.pathname !== '/') {
+//       navigate('/');
+//     }
+//   } else {
+//     // Logged-in user
+//     if (user.role === 'therapist' && location.pathname !== '/dashboard') {
+//       navigate('/dashboard');
+//     } else if (
+//       user.role === 'child' &&
+//       location.pathname !== '/' &&
+//       location.pathname !== '/listoftherapists'
+//     ) {
+//       navigate('/');
+//     } else if (
+//       user.role === 'superadmin' &&
+//       location.pathname !== '/superadmindashboard'
+//     ) {
+//       navigate('/superadmindashboard');
+//     }
+//   }
+// }, [user, navigate, location.pathname]);
+
+
+//   const handleLogout = () => {
+//     console.log("🚨 Logging out...");
+//     localStorage.clear();
+//     setUser(null);
+//     navigate('/'); // go to homepage after logout
+//   };
+
+//   return (
+//     <>
+//       <Routes>
+//         {/* Public Routes */}
+//         <Route path="/" element={<Homepage user={user} handleLogout={handleLogout} />} />
+//         <Route path="/login" element={<Loginpage onLogin={setUser} />} />
+//         <Route path="/marineinterface" element={<MarineInterface />} />
+//         <Route path="/Starfishgame" element={<Starfishgame />} />
+//         <Route path="/report" element={<GameReportGenerator />} />
+//         <Route path="/listoftherapists" element={<TherapistListPage />} />
+
+//         {/* Superadmin Protected Route */}
+//         <Route
+//           path="/superadmindashboard"
+//           element={
+//             user && user.role === "superadmin" ? (
+//               <SuperAdminDashboard />
+//             ) : (
+//               <Navigate to="/login" />
+//             )
+//           }
+//         />
+
+//         {/* Therapist Protected Route */}
+//         <Route
+//           path="/dashboard"
+//           element={
+//             user && user.role === "therapist" ? (
+//               <TherapistDashboard userId={user._id} />
+//             ) : (
+//               <Navigate to="/login" />
+//             )
+//           }
+//         />
+//       </Routes>
+//     </>
+//   );
+// }
+
+// // Wrapper for Router setup
+// export default function AppWrapper() {
+//   return (
+//     <Router>
+//       <App />
+//     </Router>
+//   );
+// }
+
