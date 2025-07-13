@@ -1,0 +1,208 @@
+/* TherapistStatusPage.css - Enhanced with Animations and Modern Styles */
+
+.status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Use min-height to ensure it covers the viewport but can expand */
+  background: linear-gradient(135deg, #e0eafc, #cfdef3); /* Softer, modern gradient */
+  font-family: 'Poppins', sans-serif; /* A popular, modern sans-serif font */
+  padding: 2rem;
+  text-align: center;
+  overflow: hidden; /* Prevent scroll issues with animations */
+  animation: backgroundGradient 15s ease infinite alternate; /* Background animation */
+}
+
+@keyframes backgroundGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.status-card {
+  background: #ffffff;
+  padding: 3rem 2.5rem; /* Slightly adjust padding for balance */
+  border-radius: 25px; /* More rounded corners */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.05); /* Deeper, layered shadow */
+  max-width: 550px; /* Slightly wider card */
+  width: 90%;
+  transform: translateY(0); /* Base for animation */
+  opacity: 0; /* Start invisible for fade-in */
+  animation: fadeInPop 0.8s ease-out forwards; /* Fade in and slight pop effect */
+}
+
+@keyframes fadeInPop {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.status-card h2 {
+  font-size: 2.2rem; /* Slightly larger heading */
+  margin-bottom: 1.8rem;
+  color: #2c3e50; /* Darker, more professional grey */
+  position: relative; /* For underline animation */
+  display: inline-block; /* To make underline fit text */
+}
+
+.status-card h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px; /* Adjust as needed */
+  width: 100%;
+  height: 4px;
+  background-color: #6a11cb; /* A vibrant accent color */
+  border-radius: 2px;
+  transform: scaleX(0); /* Start hidden */
+  transform-origin: bottom left;
+  animation: drawUnderline 1s ease-out forwards 0.5s; /* Delay after card pops in */
+}
+
+@keyframes drawUnderline {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.status-card p {
+  font-size: 1.15rem; /* Slightly smaller for readability */
+  color: #4a4a4a; /* Softer body text color */
+  margin-top: 1rem; /* More space */
+  line-height: 1.7;
+  transition: color 0.3s ease; /* Smooth color transition if text changes */
+}
+
+/* Status-specific styles with icons and subtle animations */
+
+.status-pending {
+  color: #f39c12; /* Vibrant orange for pending */
+  font-weight: 600; /* Medium bold */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-pending::before {
+  content: '⏳'; /* Hourglass emoji */
+  margin-right: 10px;
+  font-size: 1.5em; /* Larger emoji */
+  animation: pulse 1.5s infinite ease-in-out; /* Pulsing animation */
+}
+
+.status-approved {
+  color: #27ae60; /* Stronger green for approved */
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-approved::before {
+  content: '✅'; /* Checkmark emoji */
+  margin-right: 10px;
+  font-size: 1.5em;
+  animation: bounceIn 0.8s ease-out; /* Bounce-in animation */
+}
+
+.status-rejected {
+  color: #c0392b; /* Deeper red for rejected */
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-rejected::before {
+  content: '🚫'; /* No entry emoji */
+  margin-right: 10px;
+  font-size: 1.5em;
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; /* Subtle shake */
+}
+
+
+/* Keyframe Animations */
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+  0% {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+  20% {
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+  40% {
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+  80% {
+    transform: scale3d(0.97, 0.97, 0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Optional: Add a subtle overlay for background depth */
+.status-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1; /* Ensure it's behind the content */
+}
+
+.go-button {
+  margin-top: 20px;
+  background-color: #28a745; /* Bootstrap green */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.go-button:hover {
+  background-color: #218838;
+}
+
+
+/* Add Poppins font import to your index.html or main CSS file if not already */
+/* Example in public/index.html <head> tag:
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+*/

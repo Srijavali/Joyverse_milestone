@@ -1,0 +1,101 @@
+.superadmin-container {
+  padding: 30px;
+  max-width: 800px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.therapist-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+.certificate-link {
+  display: inline-block;
+  margin: 10px 0;
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.accept-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.accept-btn:hover {
+  background-color: #218838;
+}
+
+.reject-btn:hover {
+  background-color: #c82333;
+}
+.dashboard {
+  padding: 20px;
+}
+
+.therapist-list {
+  display: flex;              /* Align items side-by-side */
+  flex-wrap: wrap;            /* Wrap to next line if too many */
+  gap: 20px;                  /* Space between cards */
+  justify-content: center;    /* Center items horizontally */
+}
+
+
+
+.exit-button {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  padding: 8px 16px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.exit-button:hover {
+  background-color: #e60000;
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;    /* Enable vertical scrolling if content overflows */
+  overflow-x: hidden;  /* Optional: prevent horizontal scroll if not needed */
+}
+
+.dashboard {
+  min-height: 100vh;       /* Ensure dashboard fills at least the viewport height */
+  overflow-y: auto;        /* Enable scrolling within the dashboard if content overflows */
+  box-sizing: border-box;  /* Include padding/border in height calculations */
+}
